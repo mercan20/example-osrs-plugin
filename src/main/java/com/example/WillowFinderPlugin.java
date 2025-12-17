@@ -9,8 +9,8 @@ import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ChatMessage;
-import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -366,6 +366,89 @@ public class WillowFinderPlugin extends Plugin
         }
     }
 
+    private boolean isBankOpen()
+    {
+        // Bank Container sichtbar?
+        return client.getItemContainer(InventoryID.BANK) != null;
+    }
+
+    private boolean isDialogOpen()
+    {
+        // NPC Dialog Widget
+        Widget npcDialog = client.getWidget(WidgetInfo.DIALOG_NPC_TEXT);
+        if (npcDialog != null && !npcDialog.isHidden())
+        {
+            return true;
+        }
+
+        // Player Dialog (Click to continue)
+        Widget playerDialog = client.getWidget(WidgetInfo.DIALOG_PLAYER_TEXT);
+        if (playerDialog != null && !playerDialog.isHidden())
+        {
+            return true;
+        }
+
+        // Option Dialog (Multiple choices)
+        Widget optionDialog = client.getWidget(WidgetInfo.DIALOG_OPTION);
+        if (optionDialog != null && !optionDialog.isHidden())
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isShopOpen()
+    {
+        // Shop Widget ID: 300,75 oder 300,76
+        Widget shopWidget = client.getWidget(300, 75);
+        if (shopWidget == null)
+        {
+            shopWidget = client.getWidget(300, 76);
+        }
+        return shopWidget != null && !shopWidget.isHidden();
+    }
+
+    private String getDialogText()
+    {
+        // NPC Dialog
+        Widget npcDialog = client.getWidget(WidgetInfo.DIALOG_NPC_TEXT);
+        if (npcDialog != null && !npcDialog.isHidden())
+        {
+            Widget npcName = client.getWidget(WidgetInfo.DIALOG_NPC_NAME);
+            String name = npcName != null ? npcName.getText() : "NPC";
+            return "[" + name + "] " + npcDialog.getText();
+        }
+
+        // Player Dialog
+        Widget playerDialog = client.getWidget(WidgetInfo.DIALOG_PLAYER_TEXT);
+        if (playerDialog != null && !playerDialog.isHidden())
+        {
+            return "[Player] " + playerDialog.getText();
+        }
+
+        // Options Dialog
+        Widget optionDialog = client.getWidget(WidgetInfo.DIALOG_OPTION);
+        if (optionDialog != null && !optionDialog.isHidden())
+        {
+            StringBuilder options = new StringBuilder("[Options] ");
+            Widget[] children = optionDialog.getChildren();
+            if (children != null)
+            {
+                for (Widget child : children)
+                {
+                    if (child != null && child.getText() != null && !child.getText().isEmpty())
+                    {
+                        options.append(child.getText()).append(" | ");
+                    }
+                }
+            }
+            return options.toString();
+        }
+
+        return null;
+    }
+
     private String buildJsonData()
     {
         Map<String, Object> data = new HashMap<>();
@@ -394,6 +477,39 @@ public class WillowFinderPlugin extends Plugin
         playerData.put("is_idle", animationId == -1);
         playerData.put("is_moving", player.getIdlePoseAnimation() != player.getPoseAnimation());
         playerData.put("interacting_with", player.getInteracting() != null ? player.getInteracting().getName() : null);
+
+        // Interface/Dialog Detection
+        playerData.put("in_bank", isBankOpen());
+        playerData.put("in_dialog", isDialogOpen());
+        playerData.put("in_shop", isShopOpen());
+        // Note: Typing detection nicht verfügbar in aktueller API
+
+        // Interaktion Details
+        Actor interacting = player.getInteracting();
+        if (interacting != null)
+        {
+            Map<String, Object> interactData = new HashMap<>();
+            interactData.put("name", interacting.getName());
+            interactData.put("type", interacting instanceof NPC ? "npc" : "player");
+            interactData.put("health_ratio", interacting.getHealthRatio());
+            interactData.put("health_scale", interacting.getHealthScale());
+
+            if (interacting instanceof NPC)
+            {
+                NPC npc = (NPC) interacting;
+                interactData.put("npc_id", npc.getId());
+                interactData.put("combat_level", npc.getCombatLevel());
+            }
+
+            playerData.put("interaction_details", interactData);
+        }
+
+        // Dialog Text wenn vorhanden
+        String dialogText = getDialogText();
+        if (dialogText != null)
+        {
+            playerData.put("dialog_text", dialogText);
+        }
 
         data.put("player", playerData);
 
