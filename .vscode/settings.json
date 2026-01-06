@@ -1,0 +1,24 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.compile.nullAnalysis.mode": "automatic",
+  "java.server.launchMode": "Standard",
+  "java.import.gradle.enabled": true,
+  "java.import.gradle.wrapper.enabled": true,
+  "java.import.gradle.offline.enabled": false,
+  "files.exclude": {
+    "**/.gradle": true,
+    "**/build": false
+  },
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-11",
+      "path": "C:\\Users\\Mercan\\.jdks\\corretto-11.0.29",
+      "default": true
+    }
+  ],
+  "java.jdt.ls.java.home": "C:\\Users\\Mercan\\.jdks\\corretto-11.0.29",
+  "editor.formatOnSave": true,
+  "java.format.enabled": true,
+  "java.format.settings.url": null,
+  "java.format.settings.profile": "GoogleStyle"
+}

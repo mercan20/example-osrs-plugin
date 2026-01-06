@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch WillowFinder Plugin Test",
+      "request": "launch",
+      "mainClass": "com.example.ExamplePluginTest",
+      "projectName": "example",
+      "args": "",
+      "vmArgs": "-ea",
+      "console": "integratedTerminal",
+      "javaExec": "C:\\Users\\Mercan\\.jdks\\corretto-11.0.29\\bin\\java.exe"
+    },
+    {
+      "type": "java",
+      "name": "Debug Current Java File",
+      "request": "launch",
+      "mainClass": "${file}",
+      "console": "integratedTerminal"
+    }
+  ]
+}

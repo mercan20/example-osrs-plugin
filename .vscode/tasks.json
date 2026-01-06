@@ -1,0 +1,64 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "gradle: build",
+      "type": "shell",
+      "command": "./gradlew build",
+      "windows": {
+        "command": ".\\gradlew.bat build"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gradle"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "gradle: clean",
+      "type": "shell",
+      "command": "./gradlew clean",
+      "windows": {
+        "command": ".\\gradlew.bat clean"
+      },
+      "problemMatcher": ["$gradle"]
+    },
+    {
+      "label": "gradle: test",
+      "type": "shell",
+      "command": "./gradlew test",
+      "windows": {
+        "command": ".\\gradlew.bat test"
+      },
+      "group": "test",
+      "problemMatcher": ["$gradle"]
+    },
+    {
+      "label": "gradle: shadowJar",
+      "type": "shell",
+      "command": "./gradlew shadowJar",
+      "windows": {
+        "command": ".\\gradlew.bat shadowJar"
+      },
+      "problemMatcher": ["$gradle"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "gradle: clean build",
+      "type": "shell",
+      "command": "./gradlew clean build",
+      "windows": {
+        "command": ".\\gradlew.bat clean build"
+      },
+      "group": "build",
+      "problemMatcher": ["$gradle"]
+    }
+  ]
+}
